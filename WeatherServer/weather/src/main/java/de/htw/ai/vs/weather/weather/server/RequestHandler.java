@@ -20,20 +20,20 @@ public class RequestHandler implements Runnable {
 	public RequestHandler(Socket connectionSocket) {
 		this.connectionSocket = connectionSocket;
 	}
-	
+
 	@Override
 	public void run() {
-		
-		while(!this.isDone){
+
+		while (!this.isDone) {
 			handleRequest();
 		}
 	}
-	
+
 	public void handleRequest() {
 
 		String clientSentence = "";
 		String capitalizedSentence = "";
-	
+
 		try {
 			outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 		} catch (IOException e) {
@@ -65,6 +65,5 @@ public class RequestHandler implements Runnable {
 		}
 		this.isDone = true;
 	}
-	
-	
+
 }

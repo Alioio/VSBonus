@@ -18,10 +18,8 @@ public class WeatherServer {
 		System.out.println("Hello weather server");
 
 		Server ServerInstance = Server.getInstance();
-		
-		
-			ServerInstance.initServer("");
-		
+
+		ServerInstance.initServer("");
 
 	}
 

@@ -18,14 +18,14 @@ public class ConnectionHandler {
 
 	public static ConnectionHandler getInstance() {
 
-	 	if (ConnectionHandler.instance == null) {
+		if (ConnectionHandler.instance == null) {
 			ConnectionHandler.instance = new ConnectionHandler();
 		}
-		
+
 		return ConnectionHandler.instance;
 
-	}	
-	
+	}
+
 	public ServerSocket createServerAcceptSocket() throws IOException {
 		this.acceptSocket = new ServerSocket();
 		this.isShutdown = false;
@@ -44,15 +44,15 @@ public class ConnectionHandler {
 	public void handleRequest(Socket connectionSocket) throws IOException {
 
 		RequestHandler requestHandler = new RequestHandler(connectionSocket);
-		Thread newTread =  new Thread(requestHandler);
+		Thread newTread = new Thread(requestHandler);
 		newTread.start();
-		System.out.println("Wird bearbeiten von Thread: "+newTread.getId());
-		
-		if(requestHandler.isDone){
+		System.out.println("Wird bearbeiten von Thread: " + newTread.getId());
+
+		if (requestHandler.isDone) {
 			newTread.interrupt();
 			System.out.print("Thread schon gestoppt!");
 		}
-	//	NewRequest.handleRequest(connectionSocket);
+		// NewRequest.handleRequest(connectionSocket);
 
 	}
 
