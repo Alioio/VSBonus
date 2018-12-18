@@ -1,52 +1,48 @@
 package de.htw.ai.vs.weather.weather.server;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
+
+import de.htw.ai.vs.weather.weather.storage.Measurements;
+import de.htw.ai.vs.weather.weather.utils.CSVReader;
 
 public class Server {
 
 	public boolean isShutdown;
-	private Server instance;
+	private static Server instance;
 	ConnectionHandler connectionHandler;
 
-	public Server getInstance() {
-
-		if (this.instance == null) {
-			this.instance = new Server();
-			this.isShutdown = false;
-
-			try {
-				this.connectionHandler = ConnectionHandler.class.newInstance();
-			} catch (InstantiationException e) {
-				System.out.println("Es konnte kein Instanz von ConnectionHandler erzeugt werden");
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			return this;
-		} else {
-			return this;
-		}
+	public static Server getInstance () {
+	    if (Server.instance == null) {
+	      Server.instance = new Server ();
+	    }
+	    return Server.instance;
+	  }
+	
+	public boolean initServer(String CSVFilePath){
+		
+		this.connectionHandler = ConnectionHandler.getInstance();
+		
+		Measurements measurements = Measurements.getInstance();
+		
+		measurements.init("");
+		
+		return true;
 	}
+	
 
-	public static void startServer() {
+	public void startServer() {
 
-		ConnectionHandler connectionHander = null;
-		try {
-			connectionHander = ConnectionHandler.class.newInstance();
-		} catch (InstantiationException e) {
-			System.out.println("Es konnte kein Instanz von ConnectionHandler erzeugt werden!");
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} finally {
+		ConnectionHandler connectionHander;
+		connectionHander = ConnectionHandler.getInstance();
+		
 			ServerSocket welcomeSocket = null;
+			
 			try {
 				welcomeSocket = connectionHander.createServerAcceptSocket();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				System.out.print("Es konnten keine Daten aus dem Socket gelesen werden!");
 				e.printStackTrace();
 			}
 			try {
@@ -55,7 +51,7 @@ public class Server {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+		
 
 	}
 

@@ -1,4 +1,4 @@
-package de.htw.ai.vs.weather.weather.response;
+package de.htw.ai.vs.weather.response;
 
 public class Response {
 
@@ -10,19 +10,19 @@ public class Response {
 		this.status = status;
 	}
 
-	protected String getMessage() {
+	public String getMessage() {
 		return message;
 	}
 
-	protected void setMessage(String message) {
+	public void setMessage(String message) {
 		this.message = message;
 	}
 
-	protected int getStatus() {
+	public int getStatus() {
 		return status;
 	}
 
-	protected void setStatus(int status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
 

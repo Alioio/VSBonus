@@ -7,28 +7,29 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import de.htw.ai.vs.weather.weather.response.Response;
+
 public class ConnectionHandler {
 
 	private ServerSocket acceptSocket;
 	private boolean isShutdown;
-	private ConnectionHandler instance;
+	private static ConnectionHandler instance;
+	private Response response;
 
-	public ConnectionHandler getInstance() throws IOException {
+	public static ConnectionHandler getInstance() {
 
-		if (this.instance == null) {
-			this.instance = new ConnectionHandler();
-			this.acceptSocket = new ServerSocket();
-			this.isShutdown = false;
-			return this;
-		} else {
-			return this;
+	 	if (ConnectionHandler.instance == null) {
+			ConnectionHandler.instance = new ConnectionHandler();
 		}
+		
+		return ConnectionHandler.instance;
 
-	}
-
+	}	
+	
 	public ServerSocket createServerAcceptSocket() throws IOException {
+		this.acceptSocket = new ServerSocket();
+		this.isShutdown = false;
 		ServerSocket welcomeSocket = new ServerSocket(6789);
-
 		return welcomeSocket;
 	}
 
@@ -42,8 +43,15 @@ public class ConnectionHandler {
 
 	public void handleRequest(Socket connectionSocket) throws IOException {
 
-		Thread newTread =  new Thread(new RequestHandler(connectionSocket));
+		RequestHandler requestHandler = new RequestHandler(connectionSocket);
+		Thread newTread =  new Thread(requestHandler);
 		newTread.start();
+		System.out.println("Wird bearbeiten von Thread: "+newTread.getId());
+		
+		if(requestHandler.isDone){
+			newTread.interrupt();
+			System.out.print("Thread schon gestoppt!");
+		}
 	//	NewRequest.handleRequest(connectionSocket);
 
 	}

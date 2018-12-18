@@ -7,8 +7,12 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import de.htw.ai.vs.weather.response.Response;
+
 public class WeatherClient {
 
+	//http://www.java2s.com/Code/Java/Network-Protocol/ServerSocketandSocketforSerializableobject.htm
+	
 	public static void main(String[] args) {
 		
 		try {
@@ -24,7 +28,7 @@ public class WeatherClient {
 	}
 	
 	public static void startClient() throws UnknownHostException, IOException{
-		
+
 		  String sentence = "";
 		  String modifiedSentence = "";
 		  
@@ -48,6 +52,9 @@ public class WeatherClient {
 		// In das OutputStream wird nun der String vom Nuter geschrieben.    
 		  outToServer.writeBytes(sentence + '\n');
 		  
+		  Response response = new Response("empty",1);
+		  
+		  response.setMessage("");
 		  
 		  modifiedSentence = inFromServer.readLine();
 		  System.out.println("FROM SERVER: " + modifiedSentence);	  
