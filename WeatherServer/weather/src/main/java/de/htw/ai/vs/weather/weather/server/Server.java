@@ -1,11 +1,9 @@
 package de.htw.ai.vs.weather.weather.server;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 
 import de.htw.ai.vs.weather.weather.storage.Measurements;
-import de.htw.ai.vs.weather.weather.utils.CSVReader;
 
 public class Server {
 
@@ -23,11 +21,12 @@ public class Server {
 
 	public boolean initServer(String CSVFilePath) {
 
+		boolean initSucess = false;
 		this.connectionHandler = ConnectionHandler.getInstance();
 		Measurements measurements = Measurements.getInstance();
-		measurements.init("");
-
-		return true;
+		initSucess = measurements.init("");
+		
+		return initSucess;
 	}
 
 	public void startServer() {
@@ -52,4 +51,9 @@ public class Server {
 
 	}
 
+	protected void shutdownServer(){
+		this.isShutdown = true;
+		this.connectionHandler.receiveUpdatesAboutServerState(this.isShutdown);
+		
+	}
 }

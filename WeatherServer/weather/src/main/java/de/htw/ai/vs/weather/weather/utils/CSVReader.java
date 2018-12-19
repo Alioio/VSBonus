@@ -9,7 +9,8 @@ import java.util.Scanner;
 public class CSVReader {
 
 	private String Filepath;
-	public List<String> ReadedValues;
+	private String Delimiter = ",";
+	public ArrayList<String> ReadedValues;
 
 	public CSVReader() {
 		String UsrHomeDir = System.getProperty("user.home");
@@ -22,20 +23,25 @@ public class CSVReader {
 		this.Filepath = Filepath;
 	}
 
-	public void readFile() throws FileNotFoundException {
+	public void readFileToArrayList() throws FileNotFoundException {
 		ReadedValues = new ArrayList<String>();
 		Scanner scanner = new Scanner(new File(this.Filepath));
-		scanner.useDelimiter(",");
+		scanner.useDelimiter(Delimiter);
 
 		while (scanner.hasNext()) {
 			this.ReadedValues.add(scanner.next());
-		}
-
-		for (String s : this.ReadedValues) {
-			System.out.println(s + " | ");
-		}
-
+		}	
 		scanner.close();
+	}
+	
+	public ArrayList getReadedValues(){
+		
+		/*
+		for(String Entry : this.ReadedValues){
+			System.out.print(Entry+" | ");
+		}
+		*/
+		return this.ReadedValues;
 	}
 
 }

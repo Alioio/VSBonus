@@ -1,27 +1,20 @@
 package de.htw.ai.vs.weather.weather.server;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import de.htw.ai.vs.weather.weather.response.Response;
 
 public class ConnectionHandler {
 
 	private ServerSocket acceptSocket;
 	private boolean isShutdown;
 	private static ConnectionHandler instance;
-	private Response response;
 
 	public static ConnectionHandler getInstance() {
 
 		if (ConnectionHandler.instance == null) {
 			ConnectionHandler.instance = new ConnectionHandler();
 		}
-
 		return ConnectionHandler.instance;
 
 	}
@@ -33,6 +26,8 @@ public class ConnectionHandler {
 		return welcomeSocket;
 	}
 
+	//TODO Am observer anmelden umd isShutdown State von server zu beobachten!
+	
 	public void forwardAcceptedRequestsToSeperateHandler(ServerSocket welcomeSocket) throws IOException {
 
 		while (!isShutdown) {
@@ -72,4 +67,8 @@ public class ConnectionHandler {
 		this.isShutdown = isShutdown;
 	}
 
+	protected void receiveUpdatesAboutServerState(boolean serverState){
+		
+	}
+	
 }

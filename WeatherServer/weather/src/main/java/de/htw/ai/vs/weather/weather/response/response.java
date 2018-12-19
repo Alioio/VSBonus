@@ -1,7 +1,13 @@
 package de.htw.ai.vs.weather.weather.response;
 
-public class Response {
+import java.io.Serializable;
 
+public class Response implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5767484264760108275L;
 	private String message;
 	private int status;
 	
@@ -10,21 +16,22 @@ public class Response {
 		this.status = status;
 	}
 
-	protected String getMessage() {
+	public String getMessage() {
 		return message;
 	}
 
-	protected void setMessage(String message) {
+	public void setMessage(String message) {
 		this.message = message;
 	}
 
-	protected int getStatus() {
+	public int getStatus() {
 		return status;
 	}
 
-	protected void setStatus(int status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
+	
 
 	
 }
