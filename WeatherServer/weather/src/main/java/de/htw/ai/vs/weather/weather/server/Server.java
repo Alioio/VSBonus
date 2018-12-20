@@ -29,25 +29,24 @@ public class Server {
 		return initSucess;
 	}
 
-	public void startServer() {
+	public void startServer(int acceptPort) {
 
 		ConnectionHandler connectionHander;
 		connectionHander = ConnectionHandler.getInstance();
-
-		ServerSocket welcomeSocket = null;
-
+		
 		try {
-			welcomeSocket = connectionHander.createServerAcceptSocket();
+			connectionHander.setAcceptSocket(acceptPort);
 		} catch (IOException e) {
 			System.out.print("Es konnten keine Daten aus dem Socket gelesen werden!");
 			e.printStackTrace();
 		}
-		try {
-			connectionHander.forwardAcceptedRequestsToSeperateHandler(welcomeSocket);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	
+			try {
+				connectionHander.forwardAcceptedRequestsToSeperateHandler();
+			} catch (IOException e) {
+				System.out.println("Server konnte nicht gestartet werden da kein Accept Socket angelegt werden konnte!");
+			}
+		
 
 	}
 

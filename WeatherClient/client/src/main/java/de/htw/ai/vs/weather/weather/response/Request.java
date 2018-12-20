@@ -11,7 +11,6 @@ public class Request implements Serializable{
 	String Data;
 	
 	public Request(String data) {
-
 		Data = data;
 	}
 	

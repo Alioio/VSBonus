@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentHashMap;
 
 import de.htw.ai.vs.weather.weather.bean.MeasurementPoint;
 import de.htw.ai.vs.weather.weather.server.ConnectionHandler;
@@ -14,18 +15,17 @@ import de.htw.ai.vs.weather.weather.utils.CSVReader;
 public class Measurements {
 
 	private static Measurements instance;
-	private HashMap<String,LinkedList<String>> measurementMap = new HashMap<String,LinkedList<String>>(); 
+	private ConcurrentHashMap<String,LinkedList<String>> measurementMap = new ConcurrentHashMap<String,LinkedList<String>>(); 
 	
 	public static synchronized Measurements getInstance() {
 
 		if (Measurements.instance == null) {
-			Measurements.instance = new Measurements(new HashMap());
+			Measurements.instance = new Measurements(new ConcurrentHashMap());
 		}
 		return Measurements.instance;
 	}
 
-
-	private Measurements(HashMap<String, LinkedList<String>> measurementMap) {
+	private Measurements(ConcurrentHashMap<String, LinkedList<String>> measurementMap) {
 		this.measurementMap = measurementMap;
 	}
 
@@ -74,7 +74,7 @@ public class Measurements {
 		return readSucess;
 	}
 
-	protected HashMap getMeasurementMap() {
+	protected ConcurrentHashMap getMeasurementMap() {
 		return measurementMap;
 	}
 
@@ -92,7 +92,7 @@ public class Measurements {
 	public boolean messurementsCompleteForDay(String Date){
 		boolean isComplete = false;
 		
-		if(this.measurementMap.get(Date).size() < 23){
+		if(this.measurementMap.get(Date).size() > 23){
 			isComplete = true;
 		}
 		
@@ -142,6 +142,7 @@ public class Measurements {
 				minTemp = temperature;
 			}
 		}
+		System.out.println("Min temp: "+minTemp);
 		return minTemp;
 		
 	}
@@ -164,25 +165,39 @@ public class Measurements {
 		
 	}
 	
-	protected void setMeasurementMap(HashMap measurementMap) {
+	protected void setMeasurementMap(ConcurrentHashMap measurementMap) {
 
 		this.measurementMap = measurementMap;
 	}
 
+	public boolean measurementsForDayComplete(String Date){
+		
+		boolean isComplete = false;
+		
+		LinkedList <MeasurementPoint> MeasurementPointList =  getMesurementsForDay(Date);
+		
+		if(MeasurementPointList.size() > 24){
+			isComplete = true;
+		}
+		
+		return isComplete;
+	}
+	
 	public String getDayMessurements(String Date){
 		
 		String summary = ""; 
 		String messurements = ""; 
-		LinkedList <MeasurementPoint> mpl =  getMesurementsForDay(Date);
-		
-		for(MeasurementPoint m : mpl ){
+		LinkedList <MeasurementPoint> MeasurementPointList =  getMesurementsForDay(Date);
+	
+		for(MeasurementPoint m : MeasurementPointList ){
 			messurements += m.toString();
 		}
 		
 		int maxTemp = getMaxTempOfDay(Date);
 		int minTemp = getMinTempOfDay(Date);
+		float avgTemp = getAvarateTemperatureForDay(Date);
 		
-		summary = "\nMaximaltemperature: "+maxTemp+"\n"+"Minimaltemperatur: "+"\nMessurements:\n "+messurements;
+		summary = "\nMaximaltemperature: "+maxTemp+"\n"+"Minimaltemperatur: "+minTemp+"\n"+"Durschnittliche Temperatur:"+avgTemp+"\n"+"\nMessurements:\n "+messurements;
 		
 		return summary;
 	}

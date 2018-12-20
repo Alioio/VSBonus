@@ -3,7 +3,7 @@ package de.htw.ai.vs.weather.weather.response;
 import java.io.Serializable;
 
 public class Response implements Serializable {
-
+	
 	/**
 	 * 
 	 */
@@ -32,6 +32,17 @@ public class Response implements Serializable {
 		this.status = status;
 	}
 	
+	@Override
+	public String toString() {
+		String DataComplete = "";
+		if(this.status == 0){
+			 DataComplete = "Daten für diesen Tag sind vollstaendlig!";
+		}else{
+			DataComplete = "Daten für diesen Tag sind NICHT vollstaendlig!";
+		}
+		
+		return message + "\n"+DataComplete;
+	}
 
 	
 }

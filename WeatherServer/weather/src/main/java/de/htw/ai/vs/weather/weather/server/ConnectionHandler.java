@@ -7,9 +7,10 @@ import java.net.Socket;
 public class ConnectionHandler {
 
 	private ServerSocket acceptSocket;
-	private boolean isShutdown;
 	private static ConnectionHandler instance;
-
+	private static int acceptport;
+	private boolean shutdownRequest; 
+	
 	public static ConnectionHandler getInstance() {
 
 		if (ConnectionHandler.instance == null) {
@@ -19,19 +20,11 @@ public class ConnectionHandler {
 
 	}
 
-	public ServerSocket createServerAcceptSocket() throws IOException {
-		this.acceptSocket = new ServerSocket();
-		this.isShutdown = false;
-		ServerSocket welcomeSocket = new ServerSocket(6789);
-		return welcomeSocket;
-	}
-
-	//TODO Am observer anmelden umd isShutdown State von server zu beobachten!
-	
-	public void forwardAcceptedRequestsToSeperateHandler(ServerSocket welcomeSocket) throws IOException {
-
-		while (!isShutdown) {
-			Socket connectionSocket = welcomeSocket.accept();
+	public void forwardAcceptedRequestsToSeperateHandler() throws IOException {
+		
+		while(!this.shutdownRequest){
+			System.out.println("Weather Server lauscht auf Port "+this.getAcceptSocket().getLocalPort()+"...\n");
+			Socket connectionSocket = this.getAcceptSocket().accept();
 			handleRequest(connectionSocket);
 		}
 	}
@@ -41,13 +34,7 @@ public class ConnectionHandler {
 		RequestHandler requestHandler = new RequestHandler(connectionSocket);
 		Thread newTread = new Thread(requestHandler);
 		newTread.start();
-		System.out.println("Wird bearbeiten von Thread: " + newTread.getId());
-
-		if (requestHandler.isDone) {
-			newTread.interrupt();
-			System.out.print("Thread schon gestoppt!");
-		}
-		// NewRequest.handleRequest(connectionSocket);
+		System.out.println("Neuer Request wird mit Port: "+connectionSocket.getPort()+" Von Thread "+newTread.getId()+" bearbeitet!");
 
 	}
 
@@ -55,20 +42,20 @@ public class ConnectionHandler {
 		return acceptSocket;
 	}
 
-	protected void setAcceptSocket(ServerSocket acceptSocket) {
-		this.acceptSocket = acceptSocket;
+	protected void setAcceptSocket(int acceptPort) throws IOException {
+		this.acceptSocket = new  ServerSocket(acceptPort);
 	}
 
-	protected boolean isShutdown() {
-		return isShutdown;
+	protected static int getAcceptport() {
+		return acceptport;
 	}
 
-	protected void setShutdown(boolean isShutdown) {
-		this.isShutdown = isShutdown;
+	protected static void setAcceptport(int acceptport) {
+		ConnectionHandler.acceptport = acceptport;
 	}
-
+	
 	protected void receiveUpdatesAboutServerState(boolean serverState){
-		
+		System.out.println("Server shutdown request: "+serverState);
 	}
 	
 }

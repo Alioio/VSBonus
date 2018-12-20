@@ -16,15 +16,11 @@ public class RequestHandler implements Runnable {
 
 	Socket connectionSocket;
 	boolean isDone;
-	/*
-	DataOutputStream outToClient;
-	BufferedReader inFromClient;
-	*/
-	
+
 	ObjectOutputStream outToClient;
 	ObjectInputStream ois;
-	Response response;
-
+	Request request;
+	
 	public RequestHandler(Socket connectionSocket) {
 		this.connectionSocket = connectionSocket;
 	}
@@ -38,57 +34,98 @@ public class RequestHandler implements Runnable {
 	}
 
 	public void handleRequest() {
-		
+
+		 initReader();
+
+		 readRequestFromClient();
+
+		 sendResponseToClient();
+
+		 closeRequest();
+	}
+	
+	private boolean initReader(){
+		boolean sucess = false;
 		try {
-			 outToClient = new ObjectOutputStream(connectionSocket.getOutputStream());
-			 ois = new ObjectInputStream(connectionSocket.getInputStream());
+			outToClient = new ObjectOutputStream(connectionSocket.getOutputStream());
+			ois = new ObjectInputStream(connectionSocket.getInputStream());
+			sucess = true;
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
+		return sucess;
+	}
+	
+	private boolean readRequestFromClient(){
+		
+		boolean sucecess = false;
 		try {
-			response = (Response) ois.readObject();
-			  System.out.println("Vom Server: "+response.getMessage()+"   "+response.getStatus());
+			request = (Request) ois.readObject();
+			sucecess = true;
 		} catch (ClassNotFoundException e2) {
-			// TODO Auto-generated catch block
 			System.out.println(" Klasse nicht gefunden!");
 			e2.printStackTrace();
 		} catch (IOException e2) {
-			System.out.println(" IO E!");
+			System.out.println("");
 			e2.printStackTrace();
 		}
+		return sucecess;
+	}
+	
+	private boolean sendResponseToClient(){
 		
+		boolean sucess = false;
+		Measurements MeasurementData = Measurements.getInstance();
 		
-		Response anDenClient = new Response("bye bye Client", 1);
-			try {
-				outToClient.writeObject(anDenClient);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		// vorhanden?
+		boolean measurementExists = MeasurementData.messurementsForDayExists(this.request.getData());
+		
+		Response response;
+		
+		if(!measurementExists){
+			response = new Response("Keine Daten für diesen Tag vorhanden! ", 1);
+		}else{
+			
+			boolean measurementComplete = MeasurementData.messurementsCompleteForDay(this.request.getData());
+			
+			int isComplete = 1;
+			if(measurementComplete){
+				isComplete = 0;
 			}
+		
+			// Response
+			String Messwerte = MeasurementData.getDayMessurements(this.request.getData());		
+			response = new Response(Messwerte, isComplete);
+			
+		}
+
+		try {
+			outToClient.writeObject(response);
+			sucess = true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return sucess;
+	}
+	
+	private void closeRequest(){	
 		
 		try {
 			outToClient.close();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
-		
-		
-		//////
-
 		try {
 			this.connectionSocket.close();
-			// System.out.println("Socket geschlossen?
-			// "+this.connectionSocket.isClosed()+"
-			// "+this.connectionSocket.getPort());
 		} catch (IOException e) {
 			System.out.println("Socket im RequestHandler konnte nicht geschlossen werden!");
 			e.printStackTrace();
 		}
 		this.isDone = true;
+		
 	}
+	
+	
 
 }

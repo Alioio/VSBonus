@@ -10,7 +10,7 @@ public class Response implements Serializable {
 	private static final long serialVersionUID = -5767484264760108275L;
 	private String message;
 	private int status;
-	
+
 	public Response(String message, int status) {
 		this.message = message;
 		this.status = status;
@@ -31,7 +31,17 @@ public class Response implements Serializable {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	
 
-	
+	@Override
+	public String toString() {
+		String DataComplete = "";
+		if (this.status == 0) {
+			DataComplete = "Daten für diesen Tag sind vollstaendlig!";
+		} else {
+			DataComplete = "Daten für diesen Tag sind NICHT vollstaendlig!";
+		}
+
+		return message + "\n" + DataComplete;
+	}
+
 }
